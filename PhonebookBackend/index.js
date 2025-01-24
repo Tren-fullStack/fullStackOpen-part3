@@ -8,8 +8,17 @@ const app = http.createServer((request, response) => {
     response.end(JSON.stringify(persons))
   }) */
 
+
+//const Info = (persons,timestamp) => {}
+
 app.get('/api/persons',(request,response) => {
     response.json(persons)
+})
+
+app.get('/info',(request,response) => {
+  console.log('Here')
+  response.send(`<p>Phonebook has info for ${persons.length} people</p>
+    <p>${Date(response).toString()}</p>`)
 })
 
 const PORT = 3001
