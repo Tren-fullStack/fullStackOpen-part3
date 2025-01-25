@@ -1,18 +1,19 @@
 const express = require('express')
 const app = express()
 
-/*const http = require('http')
-
-const app = http.createServer((request, response) => {
-    response.writeHead(200, { 'Content-Type': 'application/json' })
-    response.end(JSON.stringify(persons))
-  }) */
-
-
-//const Info = (persons,timestamp) => {}
-
 app.get('/api/persons',(request,response) => {
     response.json(persons)
+})
+
+app.get(`/api/persons/:id`,(request,response) => {
+  const id = request.params.id
+  const person = persons.find(person => person.id == id)
+
+  if (person) {
+    response.json(person)
+  } else {
+    response.status(404).end()
+  }
 })
 
 app.get('/info',(request,response) => {
