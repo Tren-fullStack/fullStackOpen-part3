@@ -53,16 +53,29 @@ const generateId = () => {
   return (randId)
 }
 app.post('/api/persons',(request,response) => {
-
   const body = request.body
-  console.log(body)
-  const person = {
-    id: generateId(),
-    name: body.name,
-    number: body.number
+  const errMessage = [
+    {"error":"name must be unique"},
+    {"error":"no name was given"},
+    {"error":"no number was given"}
+    ]
+  if (!body.name) {
+    response.status(400).send(errMessage[1])
+  } else if (!body.number) {
+    response.status(400).send(errMessage[2])
+  } else if (persons.find(person => person.name === body.name)) {
+    console.log(persons.find(person => person.name === body.name))
+    response.status(400).send(errMessage[0])
+  } else {
+    console.log(body)
+    const person = {
+      id: generateId(),
+      name: body.name,
+      number: body.number
+    }
+    persons = persons.concat(person)
+    response.json(person)
   }
-  persons = persons.concat(person)
-  response.json(person)
 })
 
 app.get('/info',(request,response) => {
