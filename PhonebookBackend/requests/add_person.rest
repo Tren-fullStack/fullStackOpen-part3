@@ -1,8 +1,8 @@
-POST http://localhost:3001/api/persons
+POST https://fullstackopen-part3-c4s6.onrender.com/api/persons
 Content-Type: application/json
 
 { 
-    "name": "Phil Davies",
-    "number": "672-234-1249"
+    "name": "Donnie Darko",
+    "number": "320-234-1241"
 }
 
