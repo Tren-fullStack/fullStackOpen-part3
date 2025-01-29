@@ -8,6 +8,7 @@ app.use(express.urlencoded({ extended: true}))
 morgan.token('person-data',(request,response) => {return JSON.stringify(request.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person-data'))
 app.use(cors())
+app.use(express.static('dist'))
 
 let persons = [
     { 
@@ -53,6 +54,19 @@ app.delete('/api/persons/:id',(request,response) => {
   response.status(204).end()
 })
 
+app.put(`/api/persons/:id`,(request,response) => {
+  const id = request.params.id
+  const body = request.body
+  const findPersonIndex = persons.findIndex(person => person.id === id)
+  console.log('This is the id',id)
+  console.log('This is the body',body)
+
+  persons[findPersonIndex] = { id:id, ...body }
+  console.log('This is the updated person',persons[findPersonIndex])
+  console.log(persons)
+  response.json(persons[findPersonIndex])
+})
+
 const generateId = () => {
   const randId = Math.random().toString(16).substring(2,10)
   return (randId)
@@ -65,22 +79,22 @@ app.post('/api/persons',(request,response) => {
     {"error":"no number was given"}
     ]
   if (!body.name) {
-    response.status(400).send(errMessage[1])
+    return response.status(400).send(errMessage[1])
   } else if (!body.number) {
-    response.status(400).send(errMessage[2])
+    return response.status(400).send(errMessage[2])
   } else if (persons.find(person => person.name === body.name)) {
     console.log(persons.find(person => person.name === body.name))
-    response.status(400).send(errMessage[0])
-  } else {
-    console.log(body)
-    const person = {
-      id: generateId(),
-      name: body.name,
-      number: body.number
-    }
-    persons = persons.concat(person)
-    response.json(person)
+    return response.status(400).send(errMessage[0])
   }
+  console.log(body)
+  const person = {
+     id: generateId(),
+     name: body.name,
+     number: body.number
+  }
+  persons = persons.concat(person)
+  response.json(person)
+  
 })
 
 app.get('/info',(request,response) => {
