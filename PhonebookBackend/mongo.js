@@ -17,11 +17,12 @@ else {
     //async+await waits for connection to avoid timeout error
     const connection = () => {
         mongoose.connect(url)
+            .then(console.log("connected to MongoDB"))
             .catch(error => console.log(`Unable to connect to MongoDB: ${error}`)) 
         
     }
     connection()
-    
+
     const personSchema = new mongoose.Schema({
         name: String,
         number: String,
@@ -30,16 +31,15 @@ else {
 
     //retrieves and console displays all persons in db when only password is entered
     if (process.argv.length === 3) {
-        Person
-        .find({})
-        .then(result => {
-            result.forEach(person => {
+        Person.find({})
+            .then(result => {
                 console.log('Phonebook:')
-                console.log(person.name, person.number)
+                result.forEach(person => {
+                    console.log(person.name, person.number)
+                })
             })
-        })
-        .catch(error => console.log(`Unable to find people: ${error}`))
-        mongoose.connection.close()
+            .catch(error => console.log(`Unable to find people: ${error}`))
+            mongoose.connection.close()
     }
     //adds a new person's data to the db when given the arguements necessary
     else {
