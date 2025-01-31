@@ -12,7 +12,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 app.use(cors())
 app.use(express.static('dist'))
 
-const db = mongoose.connection;
+const db = mongoose.connection
 
 db.on('disconnected', () => {
   console.log('disconnected from MongoDB');
@@ -78,7 +78,6 @@ app.post('/api/persons', (request,response,next) => {
   person.save().then(result => {
     console.log(`added ${result.name} (number: ${result.number}) to the phonebook!`)
     response.json(result)
-    mongoose.connection.close()
     })
     .catch(error => next(error))
 })
