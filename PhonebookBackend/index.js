@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
 const Person = require('./models/person')
 const app = express()
 app.use(express.json())
@@ -48,10 +49,6 @@ app.put(`/api/persons/:id`,(request,response) => {
   response.json(persons[findPersonIndex])
 })
 
-/*const generateId = () => {
-  const randId = Math.random().toString(16).substring(2,10)
-  return (randId)
-} */
 app.post('/api/persons', (request,response) => {
   const body = request.body
   const person = new Person({
@@ -65,31 +62,6 @@ app.post('/api/persons', (request,response) => {
     })
     .catch(error => console.log(`Unable to add person: ${error}`))
 })
-/*app.post('/api/persons',(request,response) => {
-  const body = request.body
-  const errMessage = [
-    {"error":"name must be unique"},
-    {"error":"no name was given"},
-    {"error":"no number was given"}
-    ]
-  if (!body.name) {
-    return response.status(400).send(errMessage[1])
-  } else if (!body.number) {
-    return response.status(400).send(errMessage[2])
-  } else if (persons.find(person => person.name === body.name)) {
-    console.log(persons.find(person => person.name === body.name))
-    return response.status(400).send(errMessage[0])
-  }
-  console.log(body)
-  const person = {
-     id: generateId(),
-     name: body.name,
-     number: body.number
-  }
-  persons = persons.concat(person)
-  response.json(person)
-  
-}) */
 
 app.get('/info',(request,response) => {
   console.log('Here')
@@ -101,4 +73,3 @@ const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-
