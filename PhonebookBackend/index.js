@@ -12,29 +12,31 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 app.use(cors())
 app.use(express.static('dist'))
 
-app.get('/api/persons',(request,response) => {
+app.get('/api/persons',(request,response,next) => {
     Person.find({}).then(people => {
-      response.json(people)
+      if (people) {
+        response.json(people)
+      } else {
+        response.status(404).end()
+      }
     })
-    .catch(error => response.status(404).end())
+    .catch(error => next(error))
 })
 
-app.get(`/api/persons/:id`,(request,response) => {
+app.get(`/api/persons/:id`,(request,response,next) => {
   const id = request.params.id
   console.log(`This is the Id: ${id}`)
 
   Person.findById(id)
     .then(person => {
-      response.json(person)
+      if (person) {
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
     })
-    .catch(error => response.status(404).end())
+    .catch(error => next(error))
 }) 
-
-/*app.delete('/api/persons/:id',(request,response) => {
-  const id = request.params.id
-  persons = persons.filter(person => person.id !== id)
-  response.status(204).end()
-}) */
 
 app.delete('/api/persons/:id',(request,response) => {
   const id = request.params.id
@@ -60,7 +62,7 @@ app.put(`/api/persons/:id`,(request,response) => {
   response.json(persons[findPersonIndex])
 })
 
-app.post('/api/persons', (request,response) => {
+app.post('/api/persons', (request,response,next) => {
   const body = request.body
   const person = new Person({
     name: body.name,
@@ -71,7 +73,7 @@ app.post('/api/persons', (request,response) => {
     response.json(result)
     mongoose.connection.close()
     })
-    .catch(error => console.log(`Unable to add person: ${error}`))
+    .catch(error => next(error))
 })
 
 app.get('/info',(request,response) => {
@@ -84,3 +86,15 @@ const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'invalid formatting' })
+  } 
+
+  next(error)
+}
+
+app.use(errorHandler)
