@@ -48,11 +48,24 @@ app.put(`/api/persons/:id`,(request,response) => {
   response.json(persons[findPersonIndex])
 })
 
-const generateId = () => {
+/*const generateId = () => {
   const randId = Math.random().toString(16).substring(2,10)
   return (randId)
-}
-app.post('/api/persons',(request,response) => {
+} */
+app.post('/api/persons', (request,response) => {
+  const body = request.body
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+  person.save().then(result => {
+    console.log(`added ${result.name} (number: ${result.number}) to the phonebook!`)
+    response.json(result)
+    mongoose.connection.close()
+    })
+    .catch(error => console.log(`Unable to add person: ${error}`))
+})
+/*app.post('/api/persons',(request,response) => {
   const body = request.body
   const errMessage = [
     {"error":"name must be unique"},
@@ -76,7 +89,7 @@ app.post('/api/persons',(request,response) => {
   persons = persons.concat(person)
   response.json(person)
   
-})
+}) */
 
 app.get('/info',(request,response) => {
   console.log('Here')
