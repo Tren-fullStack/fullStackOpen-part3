@@ -12,8 +12,15 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :p
 app.use(cors())
 app.use(express.static('dist'))
 
+const db = mongoose.connection;
+
+db.on('disconnected', () => {
+  console.log('disconnected from MongoDB');
+})
+
 app.get('/api/persons',(request,response,next) => {
     Person.find({}).then(people => {
+      console.log(people)
       if (people) {
         response.json(people)
       } else {
