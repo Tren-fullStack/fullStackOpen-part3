@@ -56,7 +56,7 @@ app.delete('/api/persons/:id',(request,response,next) => {
     .catch(error => next(error))
 })
 
-app.put('/api/persons/:id',(request,response) => {
+app.put('/api/persons/:id',(request,response,next) => {
   const body = request.body
 
   const person = {
@@ -86,9 +86,12 @@ app.post('/api/persons', (request,response,next) => {
 })
 
 app.get('/info',(request,response) => {
-  console.log('Here')
-  response.send(`<p>Phonebook has info for ${persons.length} people</p>
-    <p>${Date(response).toString()}</p>`)
+  Person.find({}).then(people => {
+    response.send(`<p>Phonebook has info for ${people.length} people</p>
+      <p>${Date(response).toString()}</p>`)
+  })
+  /*response.send(`<p>Phonebook has info for ${persons.length} people</p>
+    <p>${Date(response).toString()}</p>`) */
 })
 
 const PORT = process.env.PORT
