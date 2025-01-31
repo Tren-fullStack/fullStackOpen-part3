@@ -45,7 +45,7 @@ app.get(`/api/persons/:id`,(request,response,next) => {
     .catch(error => next(error))
 }) 
 
-app.delete('/api/persons/:id',(request,response) => {
+app.delete('/api/persons/:id',(request,response,next) => {
   const id = request.params.id
   console.log(`Delete person with this Id: ${id}`)
 
