@@ -56,17 +56,20 @@ app.delete('/api/persons/:id',(request,response,next) => {
     .catch(error => next(error))
 })
 
-app.put(`/api/persons/:id`,(request,response) => {
-  const id = request.params.id
+app.put('/api/persons/:id',(request,response) => {
   const body = request.body
-  const findPersonIndex = persons.findIndex(person => person.id === id)
-  console.log('This is the id',id)
-  console.log('This is the body',body)
 
-  persons[findPersonIndex] = { id:id, ...body }
-  console.log('This is the updated person',persons[findPersonIndex])
-  
-  response.json(persons[findPersonIndex])
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      console.log(`updated; new name: ${updatedPerson.name}, new number: ${updatedPerson.number}`)
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 app.post('/api/persons', (request,response,next) => {
