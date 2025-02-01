@@ -1,4 +1,4 @@
-require('dotenv').config()  
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
@@ -6,8 +6,8 @@ const mongoose = require('mongoose')
 const Person = require('./models/person')
 const app = express()
 app.use(express.json())
-app.use(express.urlencoded({ extended: true}))
-morgan.token('person-data',(request,response) => {return JSON.stringify(request.body)})
+app.use(express.urlencoded({ extended: true }))
+morgan.token('person-data',(request) => {return JSON.stringify(request.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :person-data'))
 app.use(cors())
 app.use(express.static('dist'))
@@ -15,22 +15,22 @@ app.use(express.static('dist'))
 const db = mongoose.connection
 
 db.on('disconnected', () => {
-  console.log('disconnected from MongoDB');
+  console.log('disconnected from MongoDB')
 })
 
 app.get('/api/persons',(request,response,next) => {
-    Person.find({}).then(people => {
-      console.log(people)
-      if (people) {
-        response.json(people)
-      } else {
-        response.status(404).end()
-      }
-    })
+  Person.find({}).then(people => {
+    console.log(people)
+    if (people) {
+      response.json(people)
+    } else {
+      response.status(404).end()
+    }
+  })
     .catch(error => next(error))
 })
 
-app.get(`/api/persons/:id`,(request,response,next) => {
+app.get('/api/persons/:id',(request,response,next) => {
   const id = request.params.id
   console.log(`This is the Id: ${id}`)
 
@@ -43,16 +43,14 @@ app.get(`/api/persons/:id`,(request,response,next) => {
       }
     })
     .catch(error => next(error))
-}) 
+})
 
 app.delete('/api/persons/:id',(request,response,next) => {
   const id = request.params.id
   console.log(`Delete person with this Id: ${id}`)
 
   Person.findByIdAndDelete(id)
-    .then(result => {
-      response.status(204).end()
-    })
+    .then(response.status(204).end())
     .catch(error => next(error))
 })
 
@@ -81,7 +79,7 @@ app.post('/api/persons', (request,response,next) => {
   person.save().then(result => {
     console.log(`added ${result.name} (number: ${result.number}) to the phonebook!`)
     response.json(result)
-    })
+  })
     .catch(error => next(error))
 })
 
@@ -102,7 +100,7 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'invalid formatting of id' })
-  } 
+  }
   else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
