@@ -20,7 +20,7 @@ const personSchema = new mongoose.Schema({
         required: true,
         validate: {
             validator: function(valName) {
-                return /^[a-z][A-Z]*$/.test(valName)
+                return /^[a-zA-Z]+$/.test(valName)
             } 
         },
     },
