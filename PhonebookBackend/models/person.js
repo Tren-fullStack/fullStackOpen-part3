@@ -17,7 +17,12 @@ const personSchema = new mongoose.Schema({
     name: {
         type: String,
         minLength: 3,
-        required: true
+        required: true,
+        validate: {
+            validator: function(valName) {
+                return /^[a-z][A-Z]*$/.test(valName)
+            } 
+        },
     },
     number: {
         type: String,
