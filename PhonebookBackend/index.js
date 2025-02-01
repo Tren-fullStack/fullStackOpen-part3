@@ -64,7 +64,7 @@ app.put('/api/persons/:id',(request,response,next) => {
     number: body.number,
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
       console.log(`updated; new name: ${updatedPerson.name}, new number: ${updatedPerson.number}`)
       response.json(updatedPerson)
@@ -90,8 +90,6 @@ app.get('/info',(request,response) => {
     response.send(`<p>Phonebook has info for ${people.length} people</p>
       <p>${Date(response).toString()}</p>`)
   })
-  /*response.send(`<p>Phonebook has info for ${persons.length} people</p>
-    <p>${Date(response).toString()}</p>`) */
 })
 
 const PORT = process.env.PORT
@@ -106,7 +104,7 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'invalid formatting of id' })
   } 
   else if (error.name === 'ValidationError') {
-    return response.status(400).send({error: "invalid formatting of name or number"})
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
