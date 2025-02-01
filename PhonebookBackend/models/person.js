@@ -13,14 +13,22 @@ mongoose.connect(url)
         process.exit(1)
     })
 
-//console.log("connected to MongoDB")
 const personSchema = new mongoose.Schema({
     name: {
         type: String,
         minLength: 3,
         required: true
     },
-    number: String,
+    number: {
+        type: String,
+        minLength: 8,
+        required: true,
+        validate: {
+            validator: function(valNum) {
+                return /^\d{2,3}[-]\d+$/.test(valNum)
+            }
+        },
+    }
 })
 
 personSchema.set('toJSON', {
